@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, Switch, ScrollView, TextInput, Button, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, Switch, ScrollView, TextInput, Button, TouchableOpacity, Alert } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
+import { faBackward, faForward, faMountainSun, faVolcano } from '@fortawesome/free-solid-svg-icons';
 
 const initialPhrases = {
   english: [
@@ -36,20 +36,26 @@ export default function App() {
   const [newTranslation, setNewTranslation] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  //Toggel between english and Icelanic 
   const toggleSwitch = () => setIsEnglish(previousState => !previousState);
 
+  //This function adds the new phrase the user created to the list
   const addPhrase = () => {
     if (newPhrase && newTranslation) {
       setPhrases({...phrases, english: [...phrases.english, [newPhrase, newTranslation]]});
       setNewPhrase('');
       setNewTranslation('');
+    } else {
+      Alert.alert("Error", "Both fields are required.");
     }
   };
 
+  //This function goes forward one index through the array. When the end of the array is reached it restarts
   const handleNext = () => {
     setCurrentIndex((currentIndex + 1) % phrases.english.length);
   };
 
+  //This function goes back one index through the array. When it reached the start it restarts
   const handleBack = () => {
     setCurrentIndex((currentIndex - 1 + phrases.english.length) % phrases.english.length);
   };
@@ -62,7 +68,7 @@ export default function App() {
           source={require('./flag.jpg')}
           style={styles.image}
         />
-        <Text style={styles.header2}>Icelandic</Text>
+        <Text style={styles.header2}><FontAwesomeIcon icon={faVolcano} size={20} color="#003897" /> Icelandic <FontAwesomeIcon icon={faMountainSun} size={20} color="#003897" /></Text>
       </View>
       <View style={styles.content}>
         <Switch
@@ -86,6 +92,8 @@ export default function App() {
         </View>
       </View>
       <View>
+      <Text style={styles.header}>Add Your Own Phrase!</Text>
+      <View>
         <TextInput
           style={styles.input}
           placeholder="English Phrase"
@@ -99,6 +107,7 @@ export default function App() {
           onChangeText={setNewTranslation}
         />
         <Button title="Add Phrase" color="#003897" onPress={addPhrase} />
+      </View>
       </View>
       <StatusBar style="auto" />
     </ScrollView>
@@ -117,6 +126,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 50,
     marginBottom: 50,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#001c4d',
   },
   header1: {
     alignItems: 'center',
@@ -162,14 +174,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '80%',
     marginTop: 20,
-  },
-  button: {
-    height: 40,
-    borderColor: '#d62827',
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-    width: '80%',
   },
   iconButton: {
     flexDirection: 'row',
