@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image, Switch, ScrollView, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, Image, Switch, ScrollView, TextInput, Button, TouchableOpacity } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { faBackward, faForward } from '@fortawesome/free-solid-svg-icons';
 
 const initialPhrases = {
   english: [
@@ -45,57 +47,61 @@ export default function App() {
   };
 
   const handleNext = () => {
-    if (currentIndex < phrases.english.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
+    setCurrentIndex((currentIndex + 1) % phrases.english.length);
   };
 
   const handleBack = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    setCurrentIndex((currentIndex - 1 + phrases.english.length) % phrases.english.length);
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.header}>
-        <Text>Language Learning App</Text>
-        <Text>Icelandic</Text>
+        <Text style={styles.header1}>Language Learning App</Text>
         <Image
           source={require('./flag.jpg')}
           style={styles.image}
         />
+        <Text style={styles.header2}>Icelandic</Text>
       </View>
       <View style={styles.content}>
         <Switch
           onValueChange={toggleSwitch}
           value={isEnglish}
+          trackColor={{ false: "#767577", true: "#d62827" }}
+          thumbColor={isEnglish ? "#003897" : "#f4f3f4"}
         />
         <View style={styles.phraseContainer}>
           <Text style={styles.phrase}>{isEnglish ? phrases.english[currentIndex][0] : phrases.english[currentIndex][1]}</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <Button title="Back" onPress={handleBack} />
-          <Button title="Next" onPress={handleNext} />
+          <TouchableOpacity style={styles.iconButton} onPress={handleBack}>
+            <FontAwesomeIcon icon={faBackward} size={20} color="#fff" />
+            <Text style={styles.buttonText}>Back</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.iconButton} onPress={handleNext}>
+            <Text style={styles.buttonText}>Next</Text>
+            <FontAwesomeIcon icon={faForward} size={20} color="#fff" />
+          </TouchableOpacity>
         </View>
       </View>
       <View>
         <TextInput
           style={styles.input}
-          placeholder="New phrase"
+          placeholder="English Phrase"
           value={newPhrase}
           onChangeText={setNewPhrase}
         />
         <TextInput
           style={styles.input}
-          placeholder="Translation"
+          placeholder="Icelandic Phrase"
           value={newTranslation}
           onChangeText={setNewTranslation}
         />
-        <Button title="Add Phrase" onPress={addPhrase} />
+        <Button title="Add Phrase" color="#003897" onPress={addPhrase} />
       </View>
       <StatusBar style="auto" />
-    </View>
+    </ScrollView>
   );
 }
 
@@ -105,10 +111,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    paddingVertical: 50,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 50,
+    marginBottom: 50,
+  },
+  header1: {
+    alignItems: 'center',
+    margin: 20,
+    fontSize: 25,
+    fontWeight: 'bold',
+    color: '#003897',
+  },
+  header2: {
+    alignItems: 'center',
+    margin: 20,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#d62827',
   },
   content: {
     flex: 1,
@@ -121,7 +143,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: '#d62827',
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
@@ -132,7 +154,7 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   phrase: {
-    fontSize: 18,
+    fontSize: 20,
     marginHorizontal: 10,
   },
   buttonContainer: {
@@ -141,4 +163,27 @@ const styles = StyleSheet.create({
     width: '80%',
     marginTop: 20,
   },
+  button: {
+    height: 40,
+    borderColor: '#d62827',
+    borderWidth: 1,
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    width: '80%',
+  },
+  iconButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#003897',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    margin: 5,
+  },
 });
+
